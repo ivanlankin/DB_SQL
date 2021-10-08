@@ -170,3 +170,20 @@ SELECT * FROM Driver
 DELETE FROM Driver WHERE ID_Company = 1
 GO
 SELECT * FROM Driver
+
+INSERT Cargo(capacity, weight, body_type) VALUES
+(30, 20, 2),
+(20, 5, 1),
+(40, 30, 3)
+
+GO
+SELECT * FROM Transport
+
+Select a.model
+From Transport as a
+WHERE EXISTS
+(Select * From Cargo as b
+where a.capacity >= b.capacity
+and a.lifting >= b.weight
+and a.body_type = b.body_type);
+GO
