@@ -67,7 +67,7 @@ CREATE TABLE Transport
    model		nvarchar(50)  NOT NULL,
    capacity		int  NOT NULL,
    lifting		int NOT NULL,
-   body_type	int NULL
+   body_type	int NOT NULL
 );
 
 CREATE TABLE Driver
@@ -111,7 +111,7 @@ CREATE TABLE OrderTable
    payment_date			date NOT NULL,
    isReceived			bit NOT NULL,
    ID_Cargo				int NOT NULL,
-   review				int NOT NULL
+   review				nvarchar(100) NOT NULL
 );
 GO
 
@@ -157,19 +157,17 @@ INSERT BodyType(Name) VALUES
 (N'Мебель, дерево'),
 (N'Электроника')
 
-INSERT Transport(model, capacity, lifting) VALUES
-(N'камаз', 30, 20),
-(N'газель', 20, 5),
-(N'грузовик', 40, 30)
+INSERT Transport(model, capacity, lifting, body_type) VALUES
+(N'камаз', 30, 20, 2),
+(N'газель', 20, 5, 1),
+(N'грузовик', 40, 30, 3)
 
 INSERT Driver(ID_Transport, ID_Company, Name, personal_documents, salary, experience) VALUES
 (1, 3, N'Иванов Иван Иванович', N'паспорт: 6313 125665', 45662.00, N'Хороший сотрудник'),
 (2, 1, N'Петров Петр Петрович', N'паспорт: 1233 424524', 45124.00, N'Такой себе сотрудник'),
 (3, 2, N'Семенов Семен Семенович', N'паспорт: 2433 242222', 42561.00, N'Такой себе сотрудник')
-SELECT * FROM Driver
 DELETE FROM Driver WHERE ID_Company = 1
 GO
-SELECT * FROM Driver
 
 INSERT Cargo(capacity, weight, body_type) VALUES
 (30, 20, 2),
@@ -177,7 +175,37 @@ INSERT Cargo(capacity, weight, body_type) VALUES
 (40, 30, 3)
 
 GO
-SELECT * FROM Transport
+
+Select p.Name as N'Компания', v.Name as N'Сотрудник'
+FROM DriversCompany as p
+JOIN Driver as v
+ON (v.ID_Company = p.ID)
+GO
+
+Select * FROM Transport
+WHERE EXISTS
+(Select capacity FROM Cargo
+where capacity <= Transport.capacity);
+GO
+
+Select Name as N'Имя', phone as N'Номер', N'Возраст' =
+	Case
+		When age < 37 then N'Молодой'
+		else N'Уже нет'
+	End
+FROM Customer
+GO
+
+Select ID, Name, N'опыт' = LOWER(Replace(experience, ' ', '_')) FROM Driver
+GO
+
+Select CAST(Email as varchar(100)) FROM DriversCompany
+GO
+
+Select MIN(age) FROM Customer
+GO
+
+Select CONVERT(date,GETDATE())
 
 Select a.model
 From Transport as a
